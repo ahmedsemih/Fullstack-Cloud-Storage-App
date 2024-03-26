@@ -27,3 +27,19 @@ export const NAV_LINKS = [
     icon: CloudCog,
   },
 ];
+
+export enum DATE_FILTER_OPTIONS {
+  "today",
+  "this week",
+  "this month",
+  "this year",
+  "last year",
+}
+
+export enum TYPE_FILTER_OPTIONS {
+  "image",
+  "pdf",
+  "video",
+  "audio",
+  "document",
+}

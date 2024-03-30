@@ -43,3 +43,18 @@ export enum TYPE_FILTER_OPTIONS {
   "audio",
   "document",
 }
+
+export const STORAGE_PLANS = {
+  free: {
+    name: "free",
+    limit: 1000000,
+  },
+  standard: {
+    name: "standard",
+    limit: 1000000 * 20,
+  },
+  premium: {
+    name: "premium",
+    limit: 1000000 * 50,
+  },
+};

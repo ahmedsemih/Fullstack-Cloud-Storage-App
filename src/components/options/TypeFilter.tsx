@@ -28,20 +28,20 @@ const TypeFilter = () => {
   const handleChangeFilter = (value: string) => {
     setFilters({
       ...filters,
-      type: TYPE_FILTER_OPTIONS[Number(value)] as TypeFilterType,
+      type: value as TypeFilterType,
     });
   };
 
   return (
-    <Select onValueChange={handleChangeFilter}>
-      <SelectTrigger className="capitalize lg:w-48 md:w-32 w-full sm:w-48">
+    <Select value={filters.type} onValueChange={handleChangeFilter}>
+      <SelectTrigger className="capitalize lg:w-48 md:w-24 w-full sm:w-32">
         <SelectValue placeholder="Type" />
       </SelectTrigger>
       <SelectContent>
-        {typeFilterOptions.map((option, index) => (
+        {typeFilterOptions.map((option) => (
           <SelectItem
             key={option}
-            value={index.toString()}
+            value={option.toString()}
             className="capitalize"
           >
             {option}

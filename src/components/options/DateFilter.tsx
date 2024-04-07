@@ -28,20 +28,20 @@ const DateFilter = () => {
   const handleChangeFilter = (value: string) => {
     setFilters({
       ...filters,
-      date: DATE_FILTER_OPTIONS[Number(value)] as DateFilterType,
+      date: value as DateFilterType,
     });
   };
 
   return (
-    <Select onValueChange={handleChangeFilter}>
-      <SelectTrigger className="capitalize w-full sm:w-48 md:w-auto lg:w-48">
+    <Select value={filters.date} onValueChange={handleChangeFilter}>
+      <SelectTrigger className="capitalize w-full sm:w-48 md:w-24 lg:w-48">
         <SelectValue placeholder="Last Modification" />
       </SelectTrigger>
       <SelectContent>
-        {datefilterOptionArray.map((option, index) => (
+        {datefilterOptionArray.map((option) => (
           <SelectItem
             key={option}
-            value={index.toString()}
+            value={option.toString()}
             className="capitalize"
           >
             {option}

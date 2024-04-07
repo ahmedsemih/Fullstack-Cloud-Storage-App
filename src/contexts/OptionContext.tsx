@@ -22,8 +22,8 @@ export type OptionContextType = {
 
 type LayoutType = "list" | "grid";
 
-export type DateFilterType = keyof typeof DATE_FILTER_OPTIONS | null;
-export type TypeFilterType = keyof typeof TYPE_FILTER_OPTIONS | null;
+export type DateFilterType = keyof typeof DATE_FILTER_OPTIONS | "";
+export type TypeFilterType = keyof typeof TYPE_FILTER_OPTIONS | "";
 
 type FiltersType = {
   date: DateFilterType;
@@ -35,8 +35,8 @@ const OptionContext = createContext<OptionContextType | null>(null);
 export const OptionProvider = ({ children }: { children: ReactNode }) => {
   const [layout, setLayout] = useState<LayoutType>("list");
   const [filters, setFilters] = useState<FiltersType>({
-    date: null,
-    type: null,
+    date: "",
+    type: "",
   });
   const [showDetails, setShowDetails] = useState<boolean>(true);
 

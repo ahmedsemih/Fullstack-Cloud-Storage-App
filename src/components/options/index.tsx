@@ -1,24 +1,17 @@
-import TypeFilter from "./TypeFilter";
-import DateFilter from "./DateFilter";
+import Filters from "./Filters";
 import LayoutToggle from "./LayoutToggle";
 import DetailToggle from "./DetailToggle";
 
-type Props = {
-  title: string;
-};
-
-const Options = ({ title }: Props) => {
-    return (
+const Options = () => {
+  return (
     <div className="flex flex-col gap-4 py-4">
-      <div className="flex items-center justify-between">
-        <h1 className="capitalize text-xl font-semibold">{title}</h1>
-        <DetailToggle />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <DetailToggle />
+        </div>
       </div>
       <div className="flex items-center justify-between gap-4 sm:flex-row flex-col">
-        <div className="flex items-center gap-4 sm:flex-row flex-col w-full sm:w-auto">
-          <TypeFilter/>
-          <DateFilter />
-        </div>
+        <Filters/>
         <LayoutToggle />
       </div>
     </div>

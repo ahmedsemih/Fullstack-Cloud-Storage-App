@@ -2,7 +2,7 @@ import { Clock, CloudCog, Home, Star, Trash2 } from "lucide-react";
 
 export const NAV_LINKS = [
   {
-    link: "/",
+    link: "/locker",
     name: "Home",
     icon: Home,
   },
@@ -47,14 +47,14 @@ export enum TYPE_FILTER_OPTIONS {
 export const STORAGE_PLANS = {
   free: {
     name: "free",
-    limit: 1000000,
+    limit: 1073741824,
   },
   standard: {
     name: "standard",
-    limit: 1000000 * 20,
+    limit: 1073741824 * 20,
   },
   premium: {
     name: "premium",
-    limit: 1000000 * 50,
+    limit: 1073741824 * 50,
   },
 };

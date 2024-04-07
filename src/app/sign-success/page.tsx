@@ -19,7 +19,7 @@ const SignSuccessPage = () => {
           const docRef = doc(database, "users", userId);
           const docSnap = await getDoc(docRef);
 
-          if (docSnap.exists()) return router.push("/");
+          if (docSnap.exists()) return router.push("/locker");
 
           await setDoc(docRef, {
             userId: userId,
@@ -27,10 +27,10 @@ const SignSuccessPage = () => {
             limit: STORAGE_PLANS.free.limit,
           });
 
-          return router.push("/");
+          return router.push("/locker");
         }
       } catch {
-        return router.push("/");
+        return router.push("/locker");
       }
     };
 

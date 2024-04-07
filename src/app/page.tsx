@@ -1,9 +1,10 @@
-import React from 'react'
+import { auth } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
-const Home = () => {
-  return (
-    <div>Home</div>
-  )
-}
+const HomePage = async () => {
+  const { userId } = auth();
 
-export default Home
+  if (userId) return redirect("/locker");
+};
+
+export default HomePage;

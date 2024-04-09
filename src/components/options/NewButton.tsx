@@ -8,6 +8,7 @@ import {
 } from "firebase/storage";
 import { Plus } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, useRef, useState } from "react";
 
 import {
@@ -27,6 +28,7 @@ import calculateTotalSize from "@/utils/calculateTotalSize";
 import calculateUserLeftSize from "@/utils/calculateUserLeftSize";
 
 const NewButton = () => {
+  const router = useRouter();
   const { userId } = useAuth();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -39,6 +41,7 @@ const NewButton = () => {
     const newDir = ref(rootStorage, `${userId}/${folderName}`);
     const ghostFile = ref(newDir, ".ghostfile");
     await uploadString(ghostFile, "");
+    router.refresh();
   };
 
   const handleUpload = async (event: ChangeEvent<HTMLInputElement>) => {

@@ -28,7 +28,7 @@ const Breadcrumbs = () => {
                   <BreadcrumbPage
                     className="capitalize text-xl"
                   >
-                    {part}
+                    {part.replace(/%20/, ' ')}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </>
@@ -41,7 +41,7 @@ const Breadcrumbs = () => {
                   className="capitalize text-xl"
                   href={currentPath}
                 >
-                  {part}
+                  {part.replace(/%20/, ' ')}
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />

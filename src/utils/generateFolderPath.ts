@@ -1,3 +1,4 @@
 export default function generateFolderPath(folders: string[], user: string) {
-    return `/${user}/` + folders.join('/');
+  const fullPath = `/${user}/` + folders.join("/");
+  return fullPath.replace(/%20/, " ");
 }

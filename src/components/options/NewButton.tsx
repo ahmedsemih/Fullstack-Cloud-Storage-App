@@ -8,8 +8,8 @@ import {
 } from "firebase/storage";
 import { Plus } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { ChangeEvent, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
 
 import {
   DropdownMenu,
@@ -31,6 +31,7 @@ const NewButton = () => {
   const router = useRouter();
   const { userId } = useAuth();
   const { toast } = useToast();
+  const pathname = usePathname();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [fileNames, setFileNames] = useState<string[]>([]);
@@ -38,8 +39,12 @@ const NewButton = () => {
   const [isNamingDialogOpen, setIsNamingDialogOpen] = useState<boolean>(false);
 
   const handleCreateFolder = async (folderName: string) => {
-    const newDir = ref(rootStorage, `${userId}/${folderName}`);
+    if(!userId) return;
+
+    const path = pathname.replace(/%20/, ' ').replace(/locker/, userId);
+    const newDir = ref(rootStorage, `${path}/${folderName}`);
     const ghostFile = ref(newDir, ".ghostfile");
+
     await uploadString(ghostFile, "");
     router.refresh();
   };
@@ -49,6 +54,7 @@ const NewButton = () => {
 
     try {
       const userRoot = ref(rootStorage, userId?.toString());
+      const path = pathname.replace(/%20/, ' ').replace(/locker/, "");
 
       const files = event.target.files;
       const totalSize = calculateTotalSize(files);
@@ -67,12 +73,12 @@ const NewButton = () => {
         setFileNames((prev) => [...prev, files[i].name]);
 
         if (files[i].webkitRelativePath === "") {
-          const fileRef = ref(userRoot, files[i].name);
+          const fileRef = ref(userRoot, `${path}/${files[i].name}`);
           const uploadTask = uploadBytesResumable(fileRef, files[i]);
           return setUploadTasks(prev => [...prev,uploadTask]);
         }
 
-        const fileRef = ref(userRoot, files[i].webkitRelativePath);
+        const fileRef = ref(userRoot, `${path}/${files[i].webkitRelativePath}`);
 
         const uploadTask = uploadBytesResumable(fileRef, files[i]);
         setUploadTasks(prev => [...prev,uploadTask]);

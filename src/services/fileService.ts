@@ -113,3 +113,26 @@ export const deleteFile = async (path: string) => {
 
   return { data, error };
 };
+
+export const deleteFolder = async (path: string) => {
+  let data = null;
+  let error = null;
+
+  try {
+    const folderRef = ref(storage, path);
+    const folder = await listAll(folderRef);
+
+    folder.items.forEach((fileRef) => deleteFile(fileRef.fullPath));
+    folder.prefixes.forEach((childFolderRef) =>
+      deleteFolder(childFolderRef.fullPath)
+    );
+
+    data = {
+      message: "Folder deleted successfully.",
+    };
+  } catch (err) {
+    error = err;
+  }
+
+  return { data, error };
+};

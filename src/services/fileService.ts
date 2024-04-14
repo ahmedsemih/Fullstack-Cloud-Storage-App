@@ -1,12 +1,14 @@
-import { database, storage } from "@/lib/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import {
+  StorageReference,
   deleteObject,
   getDownloadURL,
   getMetadata,
   listAll,
   ref,
 } from "firebase/storage";
+import { collection, getDocs, query, where } from "firebase/firestore";
+
+import { database, storage } from "@/lib/firebase";
 
 export const fetchFiles = async (path: string) => {
   const data: FileType[] = [];
@@ -37,8 +39,8 @@ export const fetchFiles = async (path: string) => {
         const downloadUrl = await getDownloadURL(files[i]);
 
         data.push({
-          name: name,
-          size: size,
+          name,
+          size,
           type: contentType!,
           lastModification: updated,
           path: fullPath,
@@ -58,10 +60,6 @@ export const fetchStarredFiles = async (userId: string) => {
   let error = null;
 
   try {
-    const { data: files, error: err } = await fetchFiles(userId);
-
-    if (err) return { data, error: err };
-
     const q = query(
       collection(database, "starred"),
       where("userId", "==", userId)
@@ -73,8 +71,23 @@ export const fetchStarredFiles = async (userId: string) => {
       starredPaths.push(starred.data().path);
     });
 
-    for (let i = 0; i < files.length; i++) {
-      if (starredPaths.includes(files[i].path)){  data.push(files[i]);}
+    for (let i = 0; i < starredPaths.length; i++) {
+      const starredRef = ref(storage, starredPaths[i]);
+
+      const { name, size, contentType, updated, fullPath } = await getMetadata(starredRef);
+
+      if (name !== ".ghostfile") {
+        const downloadUrl = await getDownloadURL(starredRef);
+
+        data.push({
+          name,
+          size,
+          type: contentType!,
+          lastModification: updated,
+          path: fullPath,
+          downloadUrl,
+        });
+      }
     }
   } catch (err) {
     error = err;

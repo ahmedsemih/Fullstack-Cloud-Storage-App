@@ -30,12 +30,12 @@ export const filterByDate = (data: FileType[], date: DateFilterType) => {
   if (!date) return data;
 
   return data.filter((file) => {
-    if(file.type === 'folder') return file;
+    if (file.type === "folder") return file;
 
-    if(file.lastModification) {
+    if (file.lastModification) {
       const { start, end } = getBoundariesOfDate(date);
       const parsedDate = parseISO(file.lastModification);
-  
+
       return parsedDate >= start && parsedDate <= end;
     }
   });
@@ -50,8 +50,8 @@ const getBoundariesOfDate = (filter: DateFilterType) => {
 
   if (filter === "this week")
     return {
-      start: startOfWeek(new Date()),
-      end: endOfWeek(new Date()),
+      start: startOfWeek(new Date(), { weekStartsOn: 1 }),
+      end: endOfWeek(new Date(), { weekStartsOn: 1 }),
     };
 
   if (filter === "this month")
@@ -70,4 +70,41 @@ const getBoundariesOfDate = (filter: DateFilterType) => {
     start: startOfYear(subYears(new Date(), 1)),
     end: endOfYear(subYears(new Date(), 1)),
   };
+};
+
+export const groupByDate = (data: FileType[]) => {
+  const { start: todayStart, end: todayEnd } = getBoundariesOfDate("today");
+  const { start: weekStart, end: weekEnd } = getBoundariesOfDate("this week");
+  const { start: monthStart, end: monthEnd } =
+    getBoundariesOfDate("this month");
+  const { start: yearStart, end: yearEnd } = getBoundariesOfDate("this year");
+
+  const groups: GroupByDateType = {
+    today: [],
+    "this week": [],
+    "this month": [],
+    "this year": [],
+    older: [],
+    never: [],
+  };
+
+  data.forEach((file) => {
+    if (!file.lastModification) return groups["never"].push(file);
+
+    const parsedDate = parseISO(file.lastModification);
+
+    if (parsedDate >= todayStart && parsedDate <= todayEnd) {
+      groups["today"].push(file);
+    } else if (parsedDate >= weekStart && parsedDate <= weekEnd) {
+      groups["this week"].push(file);
+    } else if (parsedDate >= monthStart && parsedDate <= monthEnd) {
+      groups["this month"].push(file);
+    } else if (parsedDate >= yearStart && parsedDate <= yearEnd) {
+      groups["this year"].push(file);
+    } else {
+      groups["older"].push(file);
+    }
+  });
+
+  return groups;
 };

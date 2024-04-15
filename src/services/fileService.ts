@@ -55,6 +55,53 @@ export const fetchFiles = async (path: string) => {
   return { data, error };
 };
 
+export const fetchFilesWithSubfolders = async (userId: string) => {
+  const userRootFolder = ref(storage, userId);
+  const { data, error } = await fetchFolderItems(userRootFolder);
+
+  return { data, error };
+};
+
+export const fetchFolderItems = async (folderRef: StorageReference) => {
+  let data: FileType[] = [];
+  let error: unknown = null;
+
+  try {
+    const listRef = await listAll(folderRef);
+    const fileRefs = listRef.items;
+    const folderRefs = listRef.prefixes;
+
+    for (let i = 0; i < fileRefs.length; i++) {
+      const { name, size, contentType, updated, fullPath } = await getMetadata(
+        fileRefs[i]
+      );
+
+      if (name !== ".ghostfile") {
+        const downloadUrl = await getDownloadURL(fileRefs[i]);
+
+        data.push({
+          name,
+          size,
+          type: contentType!,
+          lastModification: updated,
+          path: fullPath,
+          downloadUrl,
+        });
+      }
+    }
+
+    for (let i = 0; i < folderRefs.length; i++) {
+      const { data: files, error: err } = await fetchFolderItems(folderRefs[i]);
+      error = err;
+      data = [...data, ...files];
+    }
+  } catch (err) {
+    error = err;
+  }
+
+  return { data, error };
+};
+
 export const fetchStarredFiles = async (userId: string) => {
   const data: FileType[] = [];
   let error = null;

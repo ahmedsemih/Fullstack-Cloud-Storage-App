@@ -12,3 +12,12 @@ type PlanType = {
   plan: string;
   limit: number;
 }
+
+type GroupByDateType = {
+  'today': FileType[];
+  'this week': FileType[];
+  'this month': FileType[];
+  'this year': FileType[];
+  'older': FileType[];
+  'never': FileType[];
+}

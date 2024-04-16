@@ -23,7 +23,13 @@ const SearchInput = React.forwardRef<HTMLInputElement, InputProps>(
 
     const handleSubmit = (event: React.FormEvent) => {
       event.preventDefault();
-      router.push(`?q=${search}`);
+
+      if (search.trim() !== "") router.push(`/locker?q=${search}`);
+      else router.push("/locker");
+
+      setTimeout(() => {
+        setSearch("");
+      }, 500);
     };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +52,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <input
           type={type}
+          value={search}
           onChange={handleInputChange}
           placeholder="Search a file or folder"
           className={cn(

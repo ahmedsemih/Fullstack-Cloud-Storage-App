@@ -1,5 +1,8 @@
 "use client";
 
+import { Fragment } from "react";
+import { usePathname } from "next/navigation";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,7 +11,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { usePathname } from "next/navigation";
 
 const Breadcrumbs = () => {
   const pathname = usePathname();
@@ -23,7 +25,6 @@ const Breadcrumbs = () => {
 
           if (index === pathParts.length - 1)
             return (
-              <>
                 <BreadcrumbItem key={index}>
                   <BreadcrumbPage
                     className="capitalize text-xl"
@@ -31,12 +32,11 @@ const Breadcrumbs = () => {
                     {part.replace(/%20/, ' ')}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
-              </>
             );
 
           return (
-            <>
-              <BreadcrumbItem key={index}>
+            <Fragment key={index}>
+              <BreadcrumbItem>
                 <BreadcrumbLink
                   className="capitalize text-xl"
                   href={currentPath}
@@ -45,7 +45,7 @@ const Breadcrumbs = () => {
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
-            </>
+            </Fragment>
           );
         })}
       </BreadcrumbList>

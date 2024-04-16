@@ -16,7 +16,7 @@ const Filters = () => {
   const handleClearFilters = () => {
     setFilters({ type: "", date: "" });
 
-    if (searchParams.has("q")) router.push("/");
+    if (searchParams.has("q")) router.push("/locker");
   };
 
   return (

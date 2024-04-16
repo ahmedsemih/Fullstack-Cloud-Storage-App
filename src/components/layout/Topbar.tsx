@@ -11,7 +11,7 @@ import { SearchInput } from "../ui/search-input";
 
 const Navbar = () => {
   return (
-    <header className="flex items-center sm:flex-row flex-col justify-between gap-4 py-4 px-2 md:px-4 w-full">
+    <header className="flex items-center sm:flex-row flex-col justify-between gap-4 py-4 w-full">
       <Link
         href="/"
         className="flex items-center text-2xl gap-2 font-semibold md:hidden mx-auto sm:w-full"

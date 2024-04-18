@@ -18,6 +18,8 @@ export type OptionContextType = {
   setFilters: (filters: FiltersType) => void;
   showDetails: boolean;
   toggleShowDetails: () => void;
+  selectedFile: FileType | null;
+  setSelectedFile: (file: FileType) => void;
 };
 
 type LayoutType = "list" | "grid";
@@ -38,11 +40,12 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
     date: "",
     type: "",
   });
-  const [showDetails, setShowDetails] = useState<boolean>(true);
+  const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<FileType | null>(null);
 
   useEffect(() => {
     const layoutCookie = getCookie("layout") as LayoutType;
-    const showDetailsCookie = getCookie("showDetails") == "true";
+    const showDetailsCookie = getCookie("showDetails") != "false";
 
     layoutCookie && setLayout(layoutCookie);
     setShowDetails(showDetailsCookie);
@@ -68,6 +71,8 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
     setFilters,
     showDetails,
     toggleShowDetails,
+    selectedFile,
+    setSelectedFile,
   };
 
   return (

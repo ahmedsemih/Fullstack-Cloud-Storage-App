@@ -72,5 +72,42 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
+  }
+
+  iframe{
+    overflow: hidden;
+  }
+}
+
+@keyframes closeDetails {
+  0% {
+    display: block;
+    /* position: absolute; */
+    transform: translateX(0px);
+  }
+
+  95% {
+    transform: translateX(1000px);
+  }
+  
+  100% {
+    transform: translateX(1000px);
+    display: hidden;
+  }
+}
+
+@keyframes openDetails {
+  0% {
+    display: hidden;
+    transform: translateX(1000px);
+  }
+
+  5% {
+    display: block;
+  }
+  
+  100% {
+    transform: translateX(0px);
   }
 }

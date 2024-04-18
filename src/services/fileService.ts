@@ -9,6 +9,7 @@ import {
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 import { database, storage } from "@/lib/firebase";
+import { checkIsStarred, removeStar } from "./starService";
 
 export const fetchFiles = async (path: string) => {
   const data: FileType[] = [];
@@ -148,6 +149,11 @@ export const deleteFile = async (path: string) => {
   let error = null;
 
   try {
+    const { data: starredData } = await checkIsStarred(path);
+
+    if(starredData)
+    await removeStar(starredData.id);
+
     const fileRef = ref(storage, path);
     await deleteObject(fileRef);
 

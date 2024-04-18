@@ -25,7 +25,7 @@ import { rootStorage } from "@/lib/firebase";
 import formatFileSize from "@/utils/formatFileSize";
 import DialogWithInput from "../dialogs/DialogWithInput";
 import calculateTotalSize from "@/utils/calculateTotalSize";
-import calculateUserLeftSize from "@/utils/calculateUserLeftSize";
+import { fetchUserRemainingSpace } from "@/services/userService";
 
 const NewButton = () => {
   const router = useRouter();
@@ -39,9 +39,9 @@ const NewButton = () => {
   const [isNamingDialogOpen, setIsNamingDialogOpen] = useState<boolean>(false);
 
   const handleCreateFolder = async (folderName: string) => {
-    if(!userId) return;
+    if (!userId) return;
 
-    const path = pathname.replace(/%20/, ' ').replace(/locker/, userId);
+    const path = pathname.replace(/%20/, " ").replace(/locker/, userId);
     const newDir = ref(rootStorage, `${path}/${folderName}`);
     const ghostFile = ref(newDir, ".ghostfile");
 
@@ -54,18 +54,18 @@ const NewButton = () => {
 
     try {
       const userRoot = ref(rootStorage, userId?.toString());
-      const path = pathname.replace(/%20/, ' ').replace(/locker/, "");
+      const path = pathname.replace(/%20/, " ").replace(/locker/, "");
 
       const files = event.target.files;
       const totalSize = calculateTotalSize(files);
-      const userLeftSize = await calculateUserLeftSize(userId);
+      const { remainingSpace } = await fetchUserRemainingSpace(userId);
 
-      if (userLeftSize < totalSize)
+      if (remainingSpace < totalSize)
         return toast({
           variant: "destructive",
           title: "Not enough space on your storage!",
           description: `You must increase your storage limit or upload files less than ${formatFileSize(
-            userLeftSize
+            remainingSpace
           )}`,
         });
 
@@ -75,13 +75,13 @@ const NewButton = () => {
         if (files[i].webkitRelativePath === "") {
           const fileRef = ref(userRoot, `${path}/${files[i].name}`);
           const uploadTask = uploadBytesResumable(fileRef, files[i]);
-          return setUploadTasks(prev => [...prev,uploadTask]);
+          return setUploadTasks((prev) => [...prev, uploadTask]);
         }
 
         const fileRef = ref(userRoot, `${path}/${files[i].webkitRelativePath}`);
 
         const uploadTask = uploadBytesResumable(fileRef, files[i]);
-        setUploadTasks(prev => [...prev,uploadTask]);
+        setUploadTasks((prev) => [...prev, uploadTask]);
       }
 
       return toast({
@@ -115,8 +115,14 @@ const NewButton = () => {
     fileInputRef.current?.click();
   };
 
-  if(uploadTasks.length > 0)
-  return <UploadDialog uploadTasks={uploadTasks} setUploadTasks={setUploadTasks} fileNames={fileNames} />
+  if (uploadTasks.length > 0)
+    return (
+      <UploadDialog
+        uploadTasks={uploadTasks}
+        setUploadTasks={setUploadTasks}
+        fileNames={fileNames}
+      />
+    );
 
   return (
     <>

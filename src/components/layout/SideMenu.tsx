@@ -16,7 +16,7 @@ const SideMenu = () => {
         <Cloud size={40} />
         Cloud Locker
       </Link>
-      <nav className="flex flex-col gap-4 mt-10 text-xl">
+      <nav className="flex flex-col gap-6 mt-10 text-xl">
         {NAV_LINKS.map((nav) => (
           <Link
             className={twMerge(
@@ -30,6 +30,15 @@ const SideMenu = () => {
             {nav.name}
           </Link>
         ))}
+        <Link
+          href="/plans"
+          className={buttonVariants({
+            className:
+              "capitalize flex justify-start items-center gap-4 text-lg w-full rounded-3xl",
+          })}
+        >
+          Buy More Storage Space
+        </Link>
       </nav>
     </aside>
   );

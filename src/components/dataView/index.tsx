@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+
 import GridView from "./GridView";
 import { TableView } from "./TableView";
 import { filterByDate, filterByType } from "@/services/filterService";
@@ -12,10 +14,9 @@ type Props = {
 
 const DataView = ({ data, error }: Props) => {
   const { layout, filters } = useOptionContext() as OptionContextType;
-  const filteredData = filterByDate(
-    filterByType(data, filters.type),
-    filters.date
-  );
+  const filteredData = useMemo(() => {
+    return filterByDate(filterByType(data, filters.type), filters.date);
+  }, [filters.date, filters.type, data]);
 
   if (error)
     return (

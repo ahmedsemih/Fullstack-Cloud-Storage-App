@@ -11,6 +11,9 @@ type PlanType = {
   userId: string;
   plan: string;
   limit: number;
+  endDate: number;
+  subscription: string | null;
+  customer: string | null;
 }
 
 type GroupByDateType = {

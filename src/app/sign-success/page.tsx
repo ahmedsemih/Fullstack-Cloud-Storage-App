@@ -25,6 +25,8 @@ const SignSuccessPage = () => {
             userId: userId,
             plan: STORAGE_PLANS.free.name,
             limit: STORAGE_PLANS.free.limit,
+            customer: null,
+            subscription: null,
           });
 
           return router.push("/locker");
@@ -41,9 +43,7 @@ const SignSuccessPage = () => {
     <div className="w-full h-[600px] flex items-center justify-center">
       <div>
         <h1 className="text-4xl">Authentication successful!</h1>
-        <p className="text-2xl mt-2">
-          You are redirecting to your storage...
-        </p>
+        <p className="text-2xl mt-2">You are redirecting to your storage...</p>
       </div>
     </div>
   );

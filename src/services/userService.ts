@@ -1,6 +1,13 @@
-import { DocumentData, doc, getDoc } from "firebase/firestore";
+import {
+  DocumentData,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 
 import { database } from "@/lib/firebase";
+import { STORAGE_PLANS } from "@/utils/constants";
 import { fetchFilesWithSubfolders } from "./fileService";
 
 export const fetchUserPlanAndLimit = async (userId: string) => {
@@ -11,7 +18,10 @@ export const fetchUserPlanAndLimit = async (userId: string) => {
     const docRef = doc(database, "users", userId);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) data = docSnap.data();
+    if (docSnap.exists()) {
+      const user = docSnap.data();
+      data = user;
+    }
   } catch (err) {
     error = err;
   }
@@ -39,4 +49,59 @@ export const fetchUserRemainingSpace = async (userId: string) => {
   }
 
   return { remainingSpace, error };
+};
+
+export const createSubscription = async (
+  userId: string,
+  plan: keyof typeof STORAGE_PLANS,
+  customer: string,
+  subscription: string
+) => {
+  let data;
+  let error = null;
+
+  try {
+    const docRef = doc(database, "users", userId);
+
+    await setDoc(docRef, {
+      userId,
+      plan: STORAGE_PLANS[plan].name,
+      limit: STORAGE_PLANS[plan].limit,
+      customer,
+      subscription,
+    });
+
+    data = {
+      message: `Successfully subscribed to ${plan} plan.`,
+    };
+  } catch (err) {
+    error = err;
+  }
+
+  return { data, error };
+};
+
+export const changeSubscription = async (
+  userId: string,
+  subscription: string,
+  plan: keyof typeof STORAGE_PLANS,
+) => {
+  let data;
+  let error = null;
+
+  try {
+    const docRef = doc(database, "users", userId);
+
+    updateDoc(docRef, {
+      plan: STORAGE_PLANS[plan].name,
+      limit: STORAGE_PLANS[plan].limit,
+      subscription,
+    });
+
+    data = { message: "Your subscription changed successfully." };
+  } catch (err) {
+    error = err;
+  }
+
+  return { data, error };
 };

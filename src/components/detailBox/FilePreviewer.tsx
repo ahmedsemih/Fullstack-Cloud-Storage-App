@@ -17,19 +17,19 @@ const FilePreviewer = ({ url, name, type }: Props) => {
 
   if (type.includes("image"))
     return (
-      <div className="w-full max-h-48 h-48 min-h-48 rounded-lg bg-foreground object-center object-contain flex items-center">
+      <div className="w-full h-60 sm:h-80 lg:h-48 rounded-lg max-h-80">
         <Image
           src={url}
           alt={name}
           width={500}
-          height={275}
-          className="m-auto w-full my-auto"
+          height={300}
+          className="w-full h-full object-cover content-center rounded-lg"
         />
       </div>
     );
 
   return (
-    <div className="w-full max-h-48 h-48 min-h-48 rounded-lg bg-foreground flex flex-col items-center justify-center text-background">
+    <div className="w-full h-60 sm:h-80 lg:h-48 rounded-lg bg-foreground flex flex-col items-center justify-center text-background">
       {isCompressed ? <Archive size={64} /> : <FileText size={64} />}
       <p
         className={`text-xl font-semibold ${

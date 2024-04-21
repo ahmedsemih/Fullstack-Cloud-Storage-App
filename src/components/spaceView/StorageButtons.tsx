@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 
 import { useToast } from "../ui/use-toast";
 import { deleteFile } from "@/services/fileService";
 import { Button, buttonVariants } from "../ui/button";
 import ConfirmationDialog from "../dialogs/ConfirmationDialog";
+import { fetchUserPlanAndLimit } from "@/services/userService";
 
 type Props = {
   rowSelection: any;
@@ -18,6 +20,7 @@ type Props = {
 const StorageButtons = ({ rowSelection, setRowSelection, data }: Props) => {
   const router = useRouter();
   const { toast } = useToast();
+  const { userId } = useAuth();
 
   const selectedRows = useMemo(
     () => data.filter((f, index) => rowSelection[index.toString()] === true),
@@ -25,6 +28,18 @@ const StorageButtons = ({ rowSelection, setRowSelection, data }: Props) => {
   );
 
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [currentPlan, setCurrentPlan] = useState<PlanType | null>(null);
+
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      const { data } = await fetchUserPlanAndLimit(userId!);
+
+      //@ts-expect-error
+      if (data) setCurrentPlan(data);
+    };
+
+    userId && fetchUserPlan();
+  }, [userId]);
 
   const handleDeleteFiles = async (files: FileType[]) => {
     if (files.length === 0) return;
@@ -51,14 +66,31 @@ const StorageButtons = ({ rowSelection, setRowSelection, data }: Props) => {
 
   return (
     <div className="mb-8 flex sm:flex-row flex-col items-center gap-4">
-      <Link
-        href="/plans"
-        className={buttonVariants({
-          className: "capitalize",
-        })}
-      >
-        buy more storage space
-      </Link>
+      {currentPlan?.plan === "free" ? (
+        <Link
+          href="/plans"
+          className={buttonVariants({
+            variant: "default",
+            className: "capitalize",
+          })}
+        >
+          buy more storage space
+        </Link>
+      ) : (
+        <Link
+          href={{
+            pathname: "/api/create-customer-portal",
+            query: { customer: currentPlan?.customer },
+          }}
+          className={buttonVariants({
+            variant: "default",
+            className: "capitalize",
+          })}
+        >
+          manage your subscription
+        </Link>
+      )}
+
       {data.length > 0 && (
         <ConfirmationDialog
           open={isDialogOpen}

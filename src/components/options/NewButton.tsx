@@ -69,6 +69,8 @@ const NewButton = () => {
           )}`,
         });
 
+      setFileNames([]);
+
       for (let i = 0; i < files.length; i++) {
         setFileNames((prev) => [...prev, files[i].name]);
 

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 type Props = {
-  children: ReactNode;
+  children?: ReactNode;
   title?: string;
   description?: string;
   open: boolean;

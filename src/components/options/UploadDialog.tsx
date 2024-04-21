@@ -1,34 +1,75 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { TaskState, UploadTask } from "firebase/storage";
 import { CirclePause, CirclePlay, CircleX } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Progress } from "../ui/progress";
 import { Button } from "@/components/ui/button";
 
 type DialogProps = {
   uploadTasks: UploadTask[];
-  setUploadTasks:  Dispatch<SetStateAction<UploadTask[]>>
+  setUploadTasks: Dispatch<SetStateAction<UploadTask[]>>;
   fileNames: string[];
 };
 
 type ItemProps = {
   uploadTask: UploadTask;
-  setUploadTasks: Dispatch<SetStateAction<UploadTask[]>>;
+  uploadStatus: TaskState;
   fileName: string;
 };
 
-const UploadDialog = ({ uploadTasks, fileNames, setUploadTasks }: DialogProps) => {
+const UploadDialog = ({
+  uploadTasks,
+  fileNames,
+  setUploadTasks,
+}: DialogProps) => {
+  const router = useRouter();
+  const [uploadStatus, setUploadStatus] = useState<TaskState[]>(() =>
+    uploadTasks.map(() => "running")
+  );
+
+  useEffect(() => {
+    for (let i = 0; i < uploadTasks.length; i++) {
+      uploadTasks[i]!.on(
+        "state_changed",
+        (snapshot) => {
+          let statusArray = uploadStatus;
+          statusArray[i] = snapshot.state;
+          setUploadStatus(statusArray);
+        },
+        (error) => {
+          let statusArray = uploadStatus;
+          statusArray[i] = "error";
+          setUploadStatus(statusArray);
+        },
+        () => {
+          let statusArray = uploadStatus;
+          statusArray[i] = "success";
+          setUploadStatus(statusArray);
+          router.refresh();
+
+          setTimeout(() => {
+            setUploadTasks((prev: UploadTask[]) =>
+              prev.filter((task) => task !== uploadTasks[i])
+            );
+          }, 1000);
+        }
+      );
+    }
+  }, []);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -46,7 +87,7 @@ const UploadDialog = ({ uploadTasks, fileNames, setUploadTasks }: DialogProps) =
             <UploadItem
               key={index}
               uploadTask={uploadTask}
-              setUploadTasks={setUploadTasks}
+              uploadStatus={uploadStatus[index]}
               fileName={fileNames[index]}
             />
           ))}
@@ -63,30 +104,7 @@ const UploadDialog = ({ uploadTasks, fileNames, setUploadTasks }: DialogProps) =
   );
 };
 
-function UploadItem({ uploadTask, fileName, setUploadTasks }: ItemProps) {
-  const router = useRouter();
-  const [uploadStatus, setUploadStatus] = useState<TaskState>("running");
-
-  useEffect(() => {
-    uploadTask!.on(
-      "state_changed",
-      (snapshot) => {
-        setUploadStatus(snapshot.state);
-      },
-      (error) => {
-        setUploadStatus("error");
-        console.log("Upload Error: ", error);
-      },
-      () => {
-        setUploadStatus("success");
-        router.refresh();
-        setTimeout(() => {
-          setUploadTasks((prev: UploadTask[]) => prev.filter(task => task !== uploadTask));
-        }, 1000)
-      }
-    );
-  }, []);
-
+const UploadItem = ({ uploadTask, fileName, uploadStatus }: ItemProps) => {
   return (
     <div className="p-2 border rounded-lg flex flex-col gap-4">
       <div className="flex gap-2 items-center justify-between">
@@ -131,6 +149,6 @@ function UploadItem({ uploadTask, fileName, setUploadTasks }: ItemProps) {
       />
     </div>
   );
-}
+};
 
 export default UploadDialog;

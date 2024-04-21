@@ -18,15 +18,14 @@ const FolderCard = ({ folder }: Props) => {
   };
 
   return (
-    <div
-      onClick={handleClick}
-      className="rounded-lg p-4 border flex flex-col gap-4 hover:bg-secondary transition-all duration-200 cursor-pointer"
-    >
-      <div className="flex items-center gap-4 justify-between">
-        <div className="flex items-center gap-4 truncate">
+    <div className="flex justify-between items-center gap-4 border rounded-lg hover:bg-secondary transition-all duration-200 cursor-pointer">
+      <div onClick={handleClick} className="rounded-lg p-4 w-full">
+        <div className="flex items-center gap-4 rounded-lg truncate w-full">
           <Folder fill="white" />
           <p className="truncate">{folder.name}</p>
         </div>
+      </div>
+      <div className="p-4 rounded-lg">
         <ActionMenu row={folder} direction="vertical" />
       </div>
     </div>

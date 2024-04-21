@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { LoaderCircle } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 import GridView from "./GridView";
 import { TableView } from "./TableView";
@@ -17,6 +18,19 @@ const DataView = ({ data, error }: Props) => {
   const filteredData = useMemo(() => {
     return filterByDate(filterByType(data, filters.type), filters.date);
   }, [filters.date, filters.type, data]);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
+
+  if (loading)
+    return (
+      <div className="w-full h-[80%] flex items-center justify-center">
+        <LoaderCircle className="animate-spin" size={64} />
+      </div>
+    );
 
   if (error)
     return (

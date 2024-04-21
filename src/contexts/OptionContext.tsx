@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 import { getCookie, setCookie } from "cookies-next";
 
 import { DATE_FILTER_OPTIONS, TYPE_FILTER_OPTIONS } from "@/utils/constants";
@@ -35,6 +36,8 @@ type FiltersType = {
 const OptionContext = createContext<OptionContextType | null>(null);
 
 export const OptionProvider = ({ children }: { children: ReactNode }) => {
+  const pathname = usePathname();
+
   const [layout, setLayout] = useState<LayoutType>("list");
   const [filters, setFilters] = useState<FiltersType>({
     date: "",
@@ -50,6 +53,11 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
     layoutCookie && setLayout(layoutCookie);
     setShowDetails(showDetailsCookie);
   }, []);
+
+  useEffect(() => {
+    setSelectedFile(null);
+    setFilters({ date: "", type: "" });
+  }, [pathname])
 
   const changeLayout = (value: LayoutType) => {
     const layoutSelection = value ? value : layout;
